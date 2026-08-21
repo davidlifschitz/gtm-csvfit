@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CsvFit — make this CSV match that one, files stay here</title>
+    <meta
+      name="description"
+      content="Drop an export CSV and the destination headers. Get a file the other site will take. Nothing is uploaded."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1c1917;
+        --muted: #57534e;
+        --line: #e7e5e4;
+        --bg: #fafaf9;
+        --card: #ffffff;
+        --accent: #0f766e;
+        --warn: #9a3412;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      main { max-width: 44rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+      h1 { font-size: 2rem; letter-spacing: -0.03em; margin: 0 0 0.75rem; }
+      h2 { font-size: 1.05rem; margin: 2rem 0 0.5rem; }
+      .kicker { color: var(--muted); font-size: 0.875rem; font-weight: 600; margin: 0 0 0.75rem; }
+      .lede { color: var(--muted); font-size: 1.125rem; max-width: 36rem; }
+      .drop {
+        margin: 1rem 0;
+        border: 1px dashed #d6d3d1;
+        border-radius: 1rem;
+        background: var(--card);
+        padding: 1.25rem;
+        text-align: center;
+      }
+      .drop.over { border-color: var(--accent); background: #f0fdfa; }
+      button {
+        appearance: none;
+        border: 0;
+        background: var(--ink);
+        color: white;
+        border-radius: 0.6rem;
+        padding: 0.6rem 1rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.secondary { background: white; color: var(--ink); border: 1px solid var(--line); }
+      button:disabled { opacity: 0.45; cursor: not-allowed; }
+      .meta { color: var(--muted); font-size: 0.875rem; }
+      .row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 0.75rem 0; justify-content: center; }
+      textarea {
+        width: 100%;
+        min-height: 4.5rem;
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        padding: 0.7rem;
+        font: inherit;
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+      th, td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--line); }
+      select { font: inherit; max-width: 100%; }
+      .cards { display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
+      @media (min-width: 640px) { .cards { grid-template-columns: 1fr 1fr 1fr; } }
+      .cards article {
+        border: 1px solid var(--line);
+        border-radius: 0.9rem;
+        padding: 1rem;
+        background: var(--card);
+      }
+      .cards h2 { font-size: 1rem; margin: 0 0 0.4rem; }
+      .cards p { margin: 0; color: var(--muted); font-size: 0.875rem; }
+      footer {
+        margin-top: 3rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      a { color: inherit; }
+      .warn { color: var(--warn); font-size: 0.875rem; }
+      input[type="file"] { display: none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="kicker">CsvFit</p>
+      <h1>You already said the problem out loud.</h1>
+      <p class="lede">
+        “I tried importing the CSV from one site to the other but that didn’t work.
+        Is there an easy way to make the .csv compatible?” Drop both. Map columns.
+        Nothing is uploaded.
+      </p>
+
+      <div class="drop" id="drop-src">
+        <p><strong>1. Drop the export CSV</strong></p>
+        <p class="meta" id="src-meta">Source file. 8 MB cap.</p>
+        <div class="row"><button type="button" id="pick-src">Choose export</button></div>
+        <input id="file-src" type="file" accept=".csv,text/csv" />
+      </div>
+      <div class="drop" id="drop-dst">
+        <p><strong>2. Drop the destination template CSV</strong> (headers only is enough)</p>
+        <p class="meta" id="dst-meta">Or paste the header row below.</p>
+        <div class="row"><button type="button" class="secondary" id="pick-dst">Choose template</button></div>
+        <input id="file-dst" type="file" accept=".csv,text/csv" />
+        <textarea id="paste" placeholder="card_id,count,set,foil"></textarea>
+      </div>
+
+      <p class="meta" id="status">Waiting for two CSVs.</p>
+      <p class="warn" id="error" hidden></p>
+      <div id="map"></div>
+      <div class="row" style="justify-content: flex-start;">
+        <button type="button" id="run" disabled>Download fitted CSV</button>
+      </div>
+
+      <section class="cards" style="margin-top: 2.5rem;">
+        <article>
+          <h2>The declaration is the qualifier</h2>
+          <p>If you already exported from one tracker and the other site rejected it, you already know you need this.</p>
+        </article>
+        <article>
+          <h2>The remapped file is the product</h2>
+          <p>Same rows. Destination column names. Extra source columns stay dropped unless you map them.</p>
+        </article>
+        <article>
+          <h2>Built for the reply</h2>
+          <p>Someone posted the pain. This page is the answer. Try it in this tab, then send the URL back.</p>
+        </article>
+      </section>
+
+      <section>
+        <h2>Who this is for</h2>
+        <ul class="meta">
+          <li>SWUDB → another collection site</li>
+          <li>Any two CSVs that mean the same thing with different headers</li>
+          <li>A template the importer published plus your dump</li>
+        </ul>
+        <p class="warn">Does not guess card names. It only rearranges columns.</p>
+      </section>
+
+      <footer>
+        <a href="https://github.com/davidlifschitz/gtm-csvfit">Source</a>
+        · Ask:
+        <a href="https://www.reddit.com/r/starwarsunlimited/comments/1vl4pwu/trying_to_import_collection_to_mulitple_db/">r/starwarsunlimited CSV import</a>
+        · 8 MB. No account. No cloud copy.
+      </footer>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
