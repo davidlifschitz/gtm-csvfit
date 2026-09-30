@@ -163,7 +163,9 @@ function esc(s) {
 }
 
 function csvCell(v) {
-  const t = String(v ?? "");
+  let t = String(v ?? "");
+  // Stop Excel/Sheets from running cells as formulas.
+  if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
   return /[",\n]/.test(t) ? `"${t.replaceAll('"', '""')}"` : t;
 }
 
