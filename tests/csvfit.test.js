@@ -40,3 +40,14 @@ describe("formula injection", () => {
     expect(csv).toBe(`name,qty\n"'=HYPERLINK(""http://x"",""hi"")",'+1\n'@SUM(A1),'-2\nplain,3\n`);
   });
 });
+
+describe("auto-mapping", () => {
+  it("does not put card names into an id column", async () => {
+    const { csv } = await fit("Card Name,Qty\nLuke,2\n", "card_id,count");
+    expect(csv).toBe("card_id,count\n,2\n");
+  });
+  it("still matches id and prefixed columns", async () => {
+    const { csv } = await fit("Card ID,Card Name,Set Code,Foil Count\n1,Luke,SOR,0\n", "card_id,card,set,foil_count");
+    expect(csv).toBe("card_id,card,set,foil_count\n1,Luke,SOR,0\n");
+  });
+});
