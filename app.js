@@ -142,13 +142,13 @@ function render() {
     .concat(source.headers.map((h) => `<option value="${esc(h)}">${esc(h)}</option>`))
     .join("");
   els.map.innerHTML = `<table>
-    <thead><tr><th>destination</th><th>from export</th></tr></thead>
+    <thead><tr><th scope="col">destination</th><th scope="col">from export</th></tr></thead>
     <tbody>
       ${destHeaders
         .map(
           (d) => `<tr>
         <td>${esc(d)}</td>
-        <td><select data-dest="${esc(d)}">${opts}</select></td>
+        <td><select data-dest="${esc(d)}" aria-label="Source column for ${esc(d)}">${opts}</select></td>
       </tr>`
         )
         .join("")}

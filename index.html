@@ -110,11 +110,11 @@
         <p class="meta" id="dst-meta">Or paste the header row below.</p>
         <div class="row"><button type="button" class="secondary" id="pick-dst">Choose template</button></div>
         <input id="file-dst" type="file" accept=".csv,text/csv" />
-        <textarea id="paste" placeholder="card_id,count,set,foil"></textarea>
+        <textarea id="paste" aria-label="Destination header row" placeholder="card_id,count,set,foil"></textarea>
       </div>
 
-      <p class="meta" id="status">Waiting for two CSVs.</p>
-      <p class="warn" id="error" hidden></p>
+      <p class="meta" id="status" role="status">Waiting for two CSVs.</p>
+      <p class="warn" id="error" role="alert" hidden></p>
       <div id="map"></div>
       <div class="row" style="justify-content: flex-start;">
         <button type="button" id="run" disabled>Download fitted CSV</button>
