@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { it, expect } from "vitest";
 import { boot, pick } from "./setup.js";
 
