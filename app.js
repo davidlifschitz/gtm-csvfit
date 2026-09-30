@@ -92,11 +92,17 @@ function norm(h) {
   return ALIAS[n] || n;
 }
 
+function isId(h) {
+  return norm(h) === "card_id" || /(^|[^a-z])(id|sku)$/i.test(String(h || "").trim());
+}
+
 function score(a, b) {
   const x = norm(a);
   const y = norm(b);
   if (!x || !y) return 0;
   if (x === y) return 100;
+  // "card_id" contains "card", but a name column must never feed an id column.
+  if (isId(a) !== isId(b)) return 0;
   if (x.includes(y) || y.includes(x)) return 70;
   return 0;
 }
