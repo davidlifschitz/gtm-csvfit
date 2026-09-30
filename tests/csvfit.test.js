@@ -33,3 +33,10 @@ describe("csvfit", () => {
     expect($("run").disabled).toBe(true);
   });
 });
+
+describe("formula injection", () => {
+  it("neutralizes cells that start like a formula", async () => {
+    const { csv } = await fit('name,qty\n"=HYPERLINK(""http://x"",""hi"")",+1\n@SUM(A1),-2\nplain,3\n', "name,qty");
+    expect(csv).toBe(`name,qty\n"'=HYPERLINK(""http://x"",""hi"")",'+1\n'@SUM(A1),'-2\nplain,3\n`);
+  });
+});
